@@ -38,17 +38,12 @@
     "no-shadow": 2,                  // http://eslint.org/docs/rules/no-shadow
     "no-shadow-restricted-names": 2, // http://eslint.org/docs/rules/no-shadow-restricted-names
     "no-undef": 2,                   // http://eslint.org/docs/rules/no-undef
-    "no-unused-vars": [2, {          // http://eslint.org/docs/rules/no-unused-vars
-      "vars": "local",
-      "args": "after-used"
-    }],
     "no-use-before-define": 2,       // http://eslint.org/docs/rules/no-use-before-define
 
     /**
      * Possible errors
      */
     "no-cond-assign": [2, "always"], // http://eslint.org/docs/rules/no-cond-assign
-    "no-console": 1,                 // http://eslint.org/docs/rules/no-console
     "no-debugger": 1,                // http://eslint.org/docs/rules/no-debugger
     "no-alert": 1,                   // http://eslint.org/docs/rules/no-alert
     "no-constant-condition": 1,      // http://eslint.org/docs/rules/no-constant-condition

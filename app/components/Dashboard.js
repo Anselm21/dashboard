@@ -18,7 +18,7 @@ export default class Dashboard extends Component {
 
     render() {
         return (
-            <div key="Dashboard">
+            <div>
                 <Helmet title="Dashboard"/>
                 <div>
                     Hello from dashboard

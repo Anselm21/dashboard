@@ -1,5 +1,5 @@
 ## Run the app
 
-0. ```npm install```
-0. ```npm start```
-0. ```npm run build```
+Install -  ```npm install```
+Run Dev - ```npm start```
+Build Prod - ```npm run build```

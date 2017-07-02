@@ -12,7 +12,7 @@ export function connectWebsocketEventsListener(store) {
         console.log('event ', data);
     });
     socket.on('message', (data)=>{
-        console.log('message ', data);
+        // console.log('message ', data);
         if (data.server_name) {
             store.dispatch({
                 type: ACTIONS.NEW_EVENT,

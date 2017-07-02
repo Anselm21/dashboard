@@ -13,10 +13,10 @@ export default function reducer(state = {}, action = {}) {
             const last = [...lastOld];
             const data = action.event;
 
-            last.unshift(data);
+            last.push(data);
 
             if (last.length > MAX_LAST_EVENTS) {
-                last.pop();
+                last.shift();
             }
 
             return {

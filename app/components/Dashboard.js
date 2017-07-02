@@ -25,18 +25,15 @@ export default class Dashboard extends Component {
             if (!events.hasOwnProperty(el)) {
                 continue;
             }
-            serverTabs.push(<ServerPanel name={el} stats={events[el]}/>);
+            serverTabs.push(<ServerPanel key={el} name={el} stats={events[el]}/>);
         }
         return serverTabs;
     }
 
     render() {
         return (
-            <div>
+            <div key="Dashboard" className="container">
                 <Helmet title="Dashboard"/>
-                <div key="Dashboard">
-                    <span>Hello from dashboard</span>
-                </div>
                 {this.renderServerTabs()}
             </div>);
     }

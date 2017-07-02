@@ -2,6 +2,8 @@ import React, {Component, PropTypes} from 'react';
 import Routes from '../routes';
 import {connect} from 'react-redux';
 import { connectWebsocketEventsListener } from '../helpers/EventListener';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap-theme.css';
 
 @connect(
     state => ({
@@ -25,7 +27,7 @@ export default class App extends Component {
     render() {
         return (
             <div>
-                <h1>Dashboard</h1>
+                <h1>Terradata</h1>
                 { Routes }
             </div>
         );

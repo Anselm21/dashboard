@@ -85,6 +85,9 @@ module.exports = {
             // them inside the js.
             loader: ExtractTextPlugin.extract('style', 'css?modules&localIdentName=[name]---[local]---[hash:base64:5]!sass')
         }, {
+                test: /\.css$/,
+                loader: 'style!css'
+            },{
             test: /\.woff(2)?(\?[a-z0-9#=&.]+)?$/,
             loader: 'url?limit=10000&mimetype=application/font-woff'
         }, {

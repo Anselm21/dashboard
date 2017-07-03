@@ -1,9 +1,20 @@
 import { ACTIONS } from '../redux/reducers/events/actions';
+import request from 'superagent';
 
 
 export function connectWebsocketEventsListener(store) {
+    request
+        .get('http://localhost:5000/info')
+        .set('Accept', 'application/json')
+        .end((err, res) => {
+            if (err || !res.ok) {
+                console.log('error ', err);
+            } else {
+                console.log('yay got ', JSON.stringify(res.body));
+            }
+        });
     console.log('connecting...');
-    const url = 'http://localhost:5000';
+    const url = 'http://localhost:5000/';
     const socket = require('socket.io-client')('http://localhost:5000');
     socket.on('connect', ()=>{
         console.log('connect');
@@ -26,3 +37,15 @@ export function connectWebsocketEventsListener(store) {
     });
 }
 
+export function getServersInfo(store) {
+    request
+        .get('http://localhost:5000/info')
+        .set('Accept', 'application/json')
+        .end((err, res) => {
+            if (err || !res.ok) {
+                console.log('error ', err);
+            } else {
+                console.log('yay got ', JSON.stringify(res.body));
+            }
+        });
+}

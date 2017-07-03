@@ -94,6 +94,7 @@ export default class App extends Component {
     }
 
     aggregateClusterStats(clusterName) {
+        const configuredServersCount = config.clusters_list[clusterName].servers.length;
         const store = this.context.store;
         const serversList = this.state.serversData[clusterName];
         let liveServersNumber = 0;
@@ -107,7 +108,7 @@ export default class App extends Component {
         if(serversList.length > 0) {
             _.forEach(serversList, (data) => {
                 if(data === false) {
-                    console.log('ERROR');
+                    console.log('failed loading from server');
                 } else {
                     results.cpu_used += data.cpu_used;
                     results.memory_total += data.memory_total;
@@ -116,6 +117,12 @@ export default class App extends Component {
                     results.rx_speed += data.rx_speed;
                     liveServersNumber += 1;
                 }
+                const failedServers = configuredServersCount - liveServersNumber;
+                store.dispatch({
+                    type: ACTIONS.SERVER_ERROR,
+                    topic: clusterName,
+                    failedServersNumber: failedServers
+                });
                 if (liveServersNumber > 0) {
                     results.cpu_used = results.cpu_used / liveServersNumber;
                     store.dispatch({

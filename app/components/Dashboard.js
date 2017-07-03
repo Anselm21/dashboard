@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 import {ServerPanel} from '../components';
+import _ from 'lodash';
 
 @connect(
     state => ({
@@ -19,13 +20,13 @@ export default class Dashboard extends Component {
 
     renderServerTabs() {
         const {events} = this.props;
-        console.log('EVENTS', events);
         const serverTabs = [];
         for (let el in events) {
             if (!events.hasOwnProperty(el)) {
                 continue;
             }
-            serverTabs.push(<ServerPanel key={el} name={el} stats={events[el]}/>);
+            const stats = _.get(events[el], 'stats', []);
+            serverTabs.push(<ServerPanel key={el} name={el} stats={stats}/>);
         }
         return serverTabs;
     }

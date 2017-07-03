@@ -26,7 +26,8 @@ export default class Dashboard extends Component {
                 continue;
             }
             const stats = _.get(events[el], 'stats', []);
-            serverTabs.push(<ServerPanel key={el} name={el} stats={stats}/>);
+            const failedServersNumber = _.get(events[el], 'failedServers', 0);
+            serverTabs.push(<ServerPanel key={el} name={el} stats={stats} failedServers={failedServersNumber}/>);
         }
         return serverTabs;
     }

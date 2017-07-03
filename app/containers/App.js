@@ -90,7 +90,7 @@ export default class App extends Component {
         _.forEach(config.clusters_list[clusterName].servers, (url) => {
             this.getServerInfo(url, clusterName, this.state.requestCounter);
         });
-        setTimeout(()=>this.getClusterInfo(clusterName), 3000);
+        setTimeout(()=>this.getClusterInfo(clusterName), 5000);
     }
 
     aggregateClusterStats(clusterName) {
@@ -125,6 +125,8 @@ export default class App extends Component {
                 });
                 if (liveServersNumber > 0) {
                     results.cpu_used = results.cpu_used / liveServersNumber;
+                    const date = new Date();
+                    results.time = date.toLocaleTimeString();
                     store.dispatch({
                         type: ACTIONS.NEW_EVENT,
                         topic: clusterName,

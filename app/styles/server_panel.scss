@@ -3,4 +3,17 @@
 }
 :global(.net-param-span) {
   padding: 0 10px 0 10px;
+  font-size: 150%;
+}
+:global(.custom-label) {
+  padding: .4em .4em .2em .4em!important;
+  font-size: 175%!important;
+  margin: 0 10px 0 10px!important;
+}
+:global(.servers-row) {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+:global(.net-row) {
+  margin-top: 25px;
 }

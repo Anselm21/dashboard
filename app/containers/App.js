@@ -1,13 +1,10 @@
 import React, {Component, PropTypes} from 'react';
 import Routes from '../routes';
 import {connect} from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/css/bootstrap-theme.css';
 import { ACTIONS } from '../redux/reducers/events/actions';
 import request from 'superagent';
 const config = require('../../config.json');
 import _ from 'lodash';
-
 
 @connect(
     state => ({
@@ -96,7 +93,7 @@ export default class App extends Component {
     aggregateClusterStats(clusterName) {
         const configuredServersCount = config.clusters_list[clusterName].servers.length;
         const store = this.context.store;
-        const serversList = this.state.serversData[clusterName];
+        const serversList = this.state.serversData[clusterName] || [];
         let liveServersNumber = 0;
         const results = {
             cpu_used: 0,

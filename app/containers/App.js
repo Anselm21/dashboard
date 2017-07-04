@@ -118,7 +118,7 @@ export default class App extends Component {
                     failedServersNumber: failedServers
                 });
                 if (liveServersNumber > 0) {
-                    results.cpu_used = results.cpu_used / liveServersNumber;
+                    results.cpu_used = Number((results.cpu_used / liveServersNumber).toFixed(1));
                     const date = new Date();
                     results.time = date.toLocaleTimeString();
                     store.dispatch({

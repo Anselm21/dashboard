@@ -20,10 +20,10 @@ export default class ServerPanel extends Component {
         const {failedServers} = this.props;
         const servers = [];
         for (let i = 0; i < configuredServersCount - failedServers; i++) {
-            servers.push(<Label key={i} className="custom-label"><Glyphicon glyph="tasks" /></Label>);
+            servers.push(<div key={i} className="col-md-6 servers-row col-sm-3 col-xs-6"><Label key={i} className="custom-label"><Glyphicon glyph="tasks" /></Label></div>);
         }
         for (let k = 0; k < failedServers; k++) {
-            servers.push(<Label key={k + 100} className="custom-label" bsStyle="danger"><Glyphicon glyph="tasks" /></Label>);
+            servers.push(<div key={k + 100} className="col-md-6 servers-row col-sm-3 col-xs-6"><Label key={k + 100} className="custom-label" bsStyle="danger"><Glyphicon glyph="tasks" /></Label></div>);
         }
         return servers;
     }
@@ -32,20 +32,23 @@ export default class ServerPanel extends Component {
         require('../styles/server_panel.scss');
         const {name, stats} = this.props;
         const clusterDescription = config.clusters_list[name].description;
-        const memoryTotal = _.get(stats[stats.length - 1], 'memory_total', undefined);
-        const rxSpeed = _.get(stats[stats.length - 1], 'rx_speed', 0);
-        const txSpeed = _.get(stats[stats.length - 1], 'tx_speed', 0);
+        const memoryTotal = _.get(stats, 'memory_total', undefined);
+        const memoryUsed = _.get(stats, 'memory_used', undefined);
+        const rxSpeed = _.get(stats, 'rx_speed', 0);
+        const txSpeed = _.get(stats, 'tx_speed', 0);
         const gaugeOptions = {
 
             chart: {
-                type: 'solidgauge'
+                type: 'solidgauge',
+                height: 300,
+                spacingTop: -70
             },
 
             title: null,
 
             pane: {
                 center: ['50%', '85%'],
-                size: '140%',
+                size: '100%',
                 startAngle: -90,
                 endAngle: 90,
                 background: {
@@ -70,7 +73,7 @@ export default class ServerPanel extends Component {
                 minorTickInterval: null,
                 tickAmount: 2,
                 title: {
-                    y: -70
+                    y: -120
                 },
                 labels: {
                     y: 16
@@ -91,9 +94,13 @@ export default class ServerPanel extends Component {
         const cpuConfig = _.merge(gaugeOptions, {
             yAxis: {
                 min: 0,
-                max: 200,
+                max: 100,
                 title: {
-                    text: 'Speed'
+                    text: 'CPU Usage',
+                    style: {
+                        'fontSize': '18px',
+                        'color': '#333333'
+                    }
                 }
             },
             credits: {
@@ -101,9 +108,9 @@ export default class ServerPanel extends Component {
             },
             series: [{
                 name: 'Speed',
-                data: [80],
+                data: [stats.cpu_used],
                 dataLabels: {
-                    format: '<div style="text-align:center"><span style="font-size:50px;color:' +
+                    format: '<div style="text-align:center"><span style="font-size:40px;color:' +
                     'black ">{y}</span><br/><span style="font-size:25px;color:silver">%</span></div>'},
                 points: [45],
                 tooltip: {
@@ -112,22 +119,66 @@ export default class ServerPanel extends Component {
             }]
         });
 
-        console.log(cpuConfig);
+        const memoryConfig = {
+            chart: {
+                type: 'column',
+                height: 300
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: 'Memory Usage'
+            },
+            xAxis: {
+                categories: ['Memory']
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'GiB'
+                }
+            },
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>GiB<br/>',
+                shared: true
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal'
+                }
+            },
+            series: [{
+                name: 'Free',
+                data: [Number((memoryTotal - memoryUsed).toFixed(1))]
+            }, {
+                name: 'Used',
+                data: [memoryUsed]
+            }]
+        };
 
         return (
             <Panel header={name} key={name}>
                 <div key={name} className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-2">
+                        <div className="row servers-row">
+                            <div className="col-md-12">
+                                {clusterDescription}
+                            </div>
+                        </div>
+                        <div className="row align-center servers-row">
+                            {this.renderServers()}
+                        </div>
+                    </div>
+                    <div className="col-md-5">
                         <ReactHighcharts config={cpuConfig}/>
                     </div>
+                    <div className="col-md-5 align-center">
+                        <ReactHighcharts config={memoryConfig}/>
+                        <span>Memory Total: {memoryTotal} GiB</span>
+                    </div>
                 </div>
-                <div className="row align-center servers-row">
-                    {clusterDescription}
-                </div>
-                <div className="row align-center servers-row">
-                    {this.renderServers()}
-                </div>
-                <div className="row align-center custom-row">
+                <div className="row align-center">
                     <span className="net-param-span"><Glyphicon glyph="arrow-up" className="net-glyph"/>{rxSpeed} Mbps</span>
                     <span className="net-param-span"><Glyphicon glyph="arrow-down" className="net-glyph"/>{txSpeed} Mbps</span>
                 </div>

@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 import {ServerPanel} from '../components';
+import {ProgressBar} from 'react-bootstrap';
 import _ from 'lodash';
 
 @connect(
@@ -14,10 +15,6 @@ export default class Dashboard extends Component {
         params: PropTypes.object,
     };
 
-    componentWillMount() {
-        console.log('mounted Dashboard');
-    }
-
     renderServerTabs() {
         const {events} = this.props;
         const serverTabs = [];
@@ -28,6 +25,9 @@ export default class Dashboard extends Component {
             const stats = _.get(events[el], 'stats', {});
             const failedServersNumber = _.get(events[el], 'failedServers', 0);
             serverTabs.push(<ServerPanel key={el} name={el} stats={stats} failedServers={failedServersNumber}/>);
+        }
+        if (serverTabs.length === 0) {
+            return <ProgressBar active now={100} label="LOADING CLUSTERS DATA"/>;
         }
         return serverTabs;
     }

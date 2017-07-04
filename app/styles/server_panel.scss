@@ -17,3 +17,6 @@
 :global(.net-row) {
   margin-top: 25px;
 }
+:global(.highcharts-yaxis-grid .highcharts-grid-line) {
+  display: none;
+}

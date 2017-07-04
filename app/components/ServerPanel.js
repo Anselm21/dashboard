@@ -1,5 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import ReactHighcharts from 'react-highcharts';
+require('highcharts-more')(ReactHighcharts.Highcharts);
+require('highcharts-solid-gauge')(ReactHighcharts.Highcharts);
 import {Panel, Glyphicon, Label} from 'react-bootstrap';
 import _ from 'lodash';
 const config = require('../../config.json');
@@ -7,28 +9,10 @@ const config = require('../../config.json');
 export default class ServerPanel extends Component {
 
     static propTypes = {
-        stats: PropTypes.array,
+        stats: PropTypes.object,
         name: PropTypes.string,
         failedServers: PropTypes.number
     };
-
-    getTimeAxis() {
-        return this.props.stats.map((el)=> {
-            return el.time;
-        });
-    }
-
-    getCPUAxis() {
-        return this.props.stats.map((el)=> {
-            return el.cpu_used;
-        });
-    }
-
-    getMemoryAxis() {
-        return this.props.stats.map((el)=> {
-            return el.memory_used;
-        });
-    }
 
     renderServers() {
         const {name} = this.props;
@@ -51,85 +35,90 @@ export default class ServerPanel extends Component {
         const memoryTotal = _.get(stats[stats.length - 1], 'memory_total', undefined);
         const rxSpeed = _.get(stats[stats.length - 1], 'rx_speed', 0);
         const txSpeed = _.get(stats[stats.length - 1], 'tx_speed', 0);
-        const cpuConfig = {
-            xAxis: {
-                categories: this.getTimeAxis()
-            },
-            series: [{
-                data: this.getCPUAxis(),
-                name: 'CPU Load'
-            }],
+        const gaugeOptions = {
+
             chart: {
-                type: 'area'
+                type: 'solidgauge'
             },
-            tooltip: {
-                valueSuffix: '%',
-            },
-            yAxis: {
-                title: {
-                    text: 'CPU Load, %'
-                },
-                min: 0,
-                max: 100
-            },
-            plotOptions: {
-                series: {
-                    animation: {
-                        duration: 0,
-                    }
+
+            title: null,
+
+            pane: {
+                center: ['50%', '85%'],
+                size: '140%',
+                startAngle: -90,
+                endAngle: 90,
+                background: {
+                    innerRadius: '60%',
+                    outerRadius: '100%',
+                    shape: 'arc'
                 }
             },
-            title: {
-                text: 'CPU LOAD'
+
+            tooltip: {
+                enabled: false
+            },
+
+            // the value axis
+            yAxis: {
+                stops: [
+                    [0.1, '#55BF3B'], // green
+                    [0.5, '#DDDF0D'], // yellow
+                    [0.9, '#DF5353'] // red
+                ],
+                lineWidth: 0,
+                minorTickInterval: null,
+                tickAmount: 2,
+                title: {
+                    y: -70
+                },
+                labels: {
+                    y: 16
+                }
+            },
+
+            plotOptions: {
+                solidgauge: {
+                    dataLabels: {
+                        y: 5,
+                        borderWidth: 0,
+                        useHTML: true
+                    }
+                }
+            }
+        };
+
+        const cpuConfig = _.merge(gaugeOptions, {
+            yAxis: {
+                min: 0,
+                max: 200,
+                title: {
+                    text: 'Speed'
+                }
             },
             credits: {
                 enabled: false
-            }
-        };
-        const memoryConfig = {
-            xAxis: {
-                categories: this.getTimeAxis()
             },
             series: [{
-                data: this.getMemoryAxis(),
-                name: 'Memory Used'
-            }],
-            chart: {
-                type: 'line'
-            },
-            tooltip: {
-                valueSuffix: ' GiB',
-            },
-            yAxis: {
-                title: {
-                    text: 'Memory Used, GiB'
-                },
-                min: 0,
-                max: memoryTotal
-            },
-            plotOptions: {
-                series: {
-                    animation: {
-                        duration: 0,
-                    }
+                name: 'Speed',
+                data: [80],
+                dataLabels: {
+                    format: '<div style="text-align:center"><span style="font-size:50px;color:' +
+                    'black ">{y}</span><br/><span style="font-size:25px;color:silver">%</span></div>'},
+                points: [45],
+                tooltip: {
+                    valueSuffix: ' km/h'
                 }
-            },
-            title: {
-                text: 'MEMORY USED'
-            },
-            credits: {
-                enabled: false
-            }
-        };
+            }]
+        });
+
+        console.log(cpuConfig);
+
         return (
             <Panel header={name} key={name}>
                 <div key={name} className="row">
                     <div className="col-md-6">
                         <ReactHighcharts config={cpuConfig}/>
-                    </div>
-                    <div className="col-md-6 align-center">
-                        <ReactHighcharts config={memoryConfig}/>
-                        <span>Memory Total: {memoryTotal} GiB</span>
                     </div>
                 </div>
                 <div className="row align-center servers-row">

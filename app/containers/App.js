@@ -103,8 +103,7 @@ export default class App extends Component {
         };
         if(serversList.length > 0) {
             _.forEach(serversList, (data) => {
-                if(data === false) {
-                } else {
+                if(data !== false) {
                     results.cpu_used += data.cpu_used;
                     results.memory_total += data.memory_total;
                     results.memory_used += data.memory_used;

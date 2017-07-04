@@ -7,20 +7,13 @@ export default function reducer(state = {}, action = {}) {
 
         case ACTIONS.NEW_EVENT:
             const clusterName = action.topic;
-            const lastOld = state[clusterName] && state[clusterName].stats ? state[clusterName].stats : [];
-            const last = [...lastOld];
             const data = action.event;
-
-            last.push(data);
-            if (last.length > MAX_LAST_EVENTS) {
-                last.shift();
-            }
 
             return {
                 ...state,
                 [clusterName]: {
                     ...state[clusterName],
-                    stats: last,
+                    stats: data,
                 }
             };
 

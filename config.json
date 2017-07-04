@@ -2,11 +2,7 @@
   "clusters_list": {
     "Stratex": {
       "description": "Cluster description goes here",
-      "servers": [ "http://localhost:5000/info", "http://localhost:5100/info"]
-    },
-    "Farm_01": {
-      "description": "Farm description goes here",
-      "servers": [ "http://localhost:5200/info" ]
+      "servers": [ "http://localhost:5000/info"]
     }
   }
 }

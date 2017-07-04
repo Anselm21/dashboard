@@ -107,14 +107,13 @@ export default class ServerPanel extends Component {
                 enabled: false
             },
             series: [{
-                name: 'Speed',
+                name: 'CPU',
                 data: [stats.cpu_used],
                 dataLabels: {
-                    format: '<div style="text-align:center"><span style="font-size:40px;color:' +
-                    'black ">{y}</span><br/><span style="font-size:25px;color:silver">%</span></div>'},
-                points: [45],
+                    format: '<div style="text-align:center"><span style="font-size:30px;color:' +
+                    'black ">{y}</span><br/><span style="font-size:20px;color:silver">%</span></div>'},
                 tooltip: {
-                    valueSuffix: ' km/h'
+                    valueSuffix: ' %'
                 }
             }]
         });

@@ -12,10 +12,6 @@ export default class ServerPanel extends Component {
         failedServers: PropTypes.number
     };
 
-    componentWillMount() {
-        console.log(this.props.stats);
-    }
-
     getTimeAxis() {
         return this.props.stats.map((el)=> {
             return el.time;
@@ -30,7 +26,6 @@ export default class ServerPanel extends Component {
 
     getMemoryAxis() {
         return this.props.stats.map((el)=> {
-            console.log(el.memory_used);
             return el.memory_used;
         });
     }

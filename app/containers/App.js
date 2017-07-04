@@ -63,7 +63,6 @@ export default class App extends Component {
                             }
                         });
                     } else {
-                        console.log('got data ', res.body);
                         this.setState({
                             serversData: {
                                 ...this.state.serversData,
@@ -105,7 +104,6 @@ export default class App extends Component {
         if(serversList.length > 0) {
             _.forEach(serversList, (data) => {
                 if(data === false) {
-                    console.log('failed loading from server');
                 } else {
                     results.cpu_used += data.cpu_used;
                     results.memory_total += data.memory_total;

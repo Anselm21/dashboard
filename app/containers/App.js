@@ -106,7 +106,7 @@ export default class App extends Component {
                 if(data !== false) {
                     results.cpu_used += data.cpu_used;
                     results.memory_total += data.memory_total;
-                    results.memory_used += data.memory_used;
+                    results.memory_used += Number((data.memory_used).toFixed(1));
                     results.tx_speed += data.tx_speed;
                     results.rx_speed += data.rx_speed;
                     liveServersNumber += 1;

@@ -27,6 +27,7 @@ build/Release
 node_modules
 .idea
 yarn.lock
+config.json
 # Debug log from npm
 npm-debug.log
 

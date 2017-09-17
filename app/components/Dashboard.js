@@ -4,6 +4,9 @@ import Helmet from 'react-helmet';
 import {ServerPanel} from '../components';
 import {ProgressBar} from 'react-bootstrap';
 import _ from 'lodash';
+import { ACTIONS } from '../redux/reducers/events/actions';
+import request from 'superagent';
+const config = require('../../config.json');
 
 @connect(
     state => ({
@@ -13,18 +16,57 @@ export default class Dashboard extends Component {
     static propTypes = {
         events: PropTypes.object,
         params: PropTypes.object,
+        store: PropTypes.object,
     };
+
+    static contextTypes = {
+        store: React.PropTypes.object
+    };
+
+    constructor(...params) {
+        super(...params);
+        this.getClusterInfo = this.getClusterInfo.bind(this);
+        this.getServerInfo = this.getServerInfo.bind(this);
+    }
+
+    componentDidMount() {
+        this.getClusterInfo();
+    }
+
+    getServerInfo(url) {
+        const store = this.context.store;
+        request
+            .get(url)
+            .set('Accept', 'application/json')
+            .end((err, res) => {
+                if (err || !res.ok) {
+                    console.log('error ', err);
+                } else {
+                    console.log('dispatch');
+                    store.dispatch({
+                        type: ACTIONS.NEW_EVENT,
+                        event: res.body
+                    });
+                }
+            });
+    }
+
+    getClusterInfo() {
+        this.getServerInfo(config.master_script);
+        setTimeout(()=>this.getClusterInfo(), 5000);
+    }
 
     renderServerTabs() {
         const {events} = this.props;
+        console.log(events);
         const serverTabs = [];
-        for (let el in events) {
-            if (!events.hasOwnProperty(el)) {
+        const sysInfo = _.get(events, 'sysInfo', {});
+        for (let el in sysInfo) {
+            if (!sysInfo.hasOwnProperty(el)) {
                 continue;
             }
-            const stats = _.get(events[el], 'stats', {});
-            const failedServersNumber = _.get(events[el], 'failedServers', 0);
-            serverTabs.push(<ServerPanel key={el} name={el} stats={stats} failedServers={failedServersNumber}/>);
+            console.log('el: ', el);
+            serverTabs.push(<ServerPanel key={el} name={el} stats={sysInfo[el]}/>);
         }
         if (serverTabs.length === 0) {
             return <ProgressBar active now={100} label="LOADING CLUSTERS DATA"/>;

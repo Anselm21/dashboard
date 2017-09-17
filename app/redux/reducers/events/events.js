@@ -1,20 +1,27 @@
 import {ACTIONS} from './actions';
 import _ from 'lodash';
-const MAX_LAST_EVENTS = 20;
 
 export default function reducer(state = {}, action = {}) {
     switch (action.type) {
 
         case ACTIONS.NEW_EVENT:
-            const clusterName = action.topic;
+            console.log(action.event);
             const data = action.event;
-
+            console.log('data: ', data);
+            const result = {};
+            _.forEach(data, (value, key)=> {
+                result[key] = {};
+                _.forEach(value, (el, index)=> {
+                    result[key][index] = {
+                        status: el.status,
+                        data: JSON.parse(el.text)
+                    };
+                });
+            });
+            console.log('parsed: ', result);
             return {
-                ...state,
-                [clusterName]: {
-                    ...state[clusterName],
-                    stats: data,
-                }
+                masterFailed: false,
+                sysInfo: result
             };
 
         case ACTIONS.SERVER_ERROR:

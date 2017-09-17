@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import ReactHighcharts from 'react-highcharts';
 require('highcharts-more')(ReactHighcharts.Highcharts);
 require('highcharts-solid-gauge')(ReactHighcharts.Highcharts);
-import {Panel, Glyphicon, Label} from 'react-bootstrap';
+import {Panel, Glyphicon, Label, Alert} from 'react-bootstrap';
 import _ from 'lodash';
 const config = require('../../config.json');
 
@@ -11,16 +11,17 @@ export default class ServerPanel extends Component {
     static propTypes = {
         stats: PropTypes.object,
         name: PropTypes.string,
-        description: PropTypes.string
+        description: PropTypes.string,
+        error: PropTypes.string
     };
 
     renderServers() {
-        const {stats} = this.props;
+        const {stats, error} = this.props;
         const servers = [];
         let i = 0;
         _.forEach(stats, (value, key)=> {
             i++;
-            if (value.status && value.status === 200) {
+            if (value.status && value.status === 200 && !error) {
                 servers.push(
                     <div key={i} className="col-md-6 servers-row col-sm-3 col-xs-6">
                         <Label title={key} key={i} className="custom-label">
@@ -50,7 +51,6 @@ export default class ServerPanel extends Component {
         let liveServersNumber = 0;
         _.forEach(stats, (value)=> {
             if (value.status && value.status === 200) {
-                console.log('data: ', value);
                 result.cpuLoad += _.get(value, 'data.cpu_used', 0);
                 result.memoryTotal += _.get(value, 'data.memory_total', 0);
                 result.memoryUsed += _.get(value, 'data.memory_used', 0);
@@ -61,14 +61,13 @@ export default class ServerPanel extends Component {
         });
         if (liveServersNumber > 0) {
             result.cpuLoad = Number((result.cpuLoad / liveServersNumber).toFixed(1));
-            console.log('result: ', result);
         }
         return result;
     }
 
     render() {
         require('../styles/server_panel.scss');
-        const {name, stats, description} = this.props;
+        const {name, stats, description, error} = this.props;
         const resultStats = this.calcClusterStats(stats);
         const gaugeOptions = {
 
@@ -192,6 +191,12 @@ export default class ServerPanel extends Component {
 
         return (
             <Panel header={name} key={name}>
+                {error && (
+                    <Alert bsStyle="danger">
+                        <h4>Error: Lost connection to master-sysinfo script</h4>
+                        <p>{error}</p>
+                    </Alert>
+                )}
                 <div key={name} className="row">
                     <div className="col-md-2">
                         <div className="row servers-row">
@@ -212,8 +217,10 @@ export default class ServerPanel extends Component {
                     </div>
                 </div>
                 <div className="row align-center">
-                    <span className="net-param-span"><Glyphicon glyph="arrow-up" className="net-glyph"/>{resultStats.rxSpeed} Mbps</span>
-                    <span className="net-param-span"><Glyphicon glyph="arrow-down" className="net-glyph"/>{resultStats.txSpeed} Mbps</span>
+                    <span className="net-param-span"><Glyphicon glyph="arrow-up"
+                                                                className="net-glyph"/>{resultStats.rxSpeed} Mbps</span>
+                    <span className="net-param-span"><Glyphicon glyph="arrow-down"
+                                                                className="net-glyph"/>{resultStats.txSpeed} Mbps</span>
                 </div>
             </Panel>
         );

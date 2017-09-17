@@ -5,9 +5,7 @@ export default function reducer(state = {}, action = {}) {
     switch (action.type) {
 
         case ACTIONS.NEW_EVENT:
-            console.log(action.event);
             const data = _.get(action, 'event', {});
-            console.log('data: ', data);
             const result = {};
             _.forEach(data, (value, key)=> {
                 const serversData = _.get(value, 'sysinfo', {});
@@ -19,21 +17,18 @@ export default function reducer(state = {}, action = {}) {
                     };
                 });
             });
-            console.log('parsed: ', result);
             return {
                 masterFailed: false,
-                dataSum: result
+                dataSum: result,
+                error: undefined
             };
 
         case ACTIONS.SERVER_ERROR:
             return {
                 ...state,
-                [action.topic]: {
-                    ...state[action.topic],
-                    failedServers: action.failedServersNumber
-                }
+                masterFailed: true,
+                error: action.error
             };
-
         default:
             return state;
     }

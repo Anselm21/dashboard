@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 import {ServerPanel} from '../components';
-import {ProgressBar} from 'react-bootstrap';
+import {ProgressBar, Alert} from 'react-bootstrap';
 import _ from 'lodash';
 import { ACTIONS } from '../redux/reducers/events/actions';
 import request from 'superagent';
@@ -40,9 +40,12 @@ export default class Dashboard extends Component {
             .set('Accept', 'application/json')
             .end((err, res) => {
                 if (err || !res.ok) {
-                    console.log('error ', err);
+                    store.dispatch({
+                        type: ACTIONS.SERVER_ERROR,
+                        error: err.message || res.body
+                    });
+                    console.log('error: ', err);
                 } else {
-                    console.log('dispatch');
                     store.dispatch({
                         type: ACTIONS.NEW_EVENT,
                         event: res.body
@@ -60,20 +63,26 @@ export default class Dashboard extends Component {
         const {events} = this.props;
         const serverTabs = [];
         const clusters = _.get(events, 'dataSum', {});
-        console.log('EVENTS!!!!: ', events);
         for (let el in clusters) {
             if (!clusters.hasOwnProperty(el)) {
                 continue;
             }
-            console.log('ELEMENT: ', el);
-            console.log('GETTTTT: ', _.get(clusters, `[${el}].sysInfo`, {}));
             serverTabs.push(<ServerPanel key={el}
                                          name={el}
+                                         error={events.error}
                                          stats={_.get(clusters, `[${el}].sysInfo`, {})}
                                          description={_.get(clusters, `[${el}].description`, '')}/>);
         }
-        if (serverTabs.length === 0) {
+        if (serverTabs.length === 0 && !events.masterFailed) {
             return <ProgressBar active now={100} label="LOADING CLUSTERS DATA"/>;
+        }
+        if (serverTabs.length === 0 && events.masterFailed) {
+            return (
+                <Alert bsStyle="danger">
+                    <h4>Error: Can't establish connection to master-sysinfo script</h4>
+                    <p>{events.error}</p>
+                </Alert>
+            );
         }
         return serverTabs;
     }

@@ -6,22 +6,23 @@ export default function reducer(state = {}, action = {}) {
 
         case ACTIONS.NEW_EVENT:
             console.log(action.event);
-            const data = action.event;
+            const data = _.get(action, 'event', {});
             console.log('data: ', data);
             const result = {};
             _.forEach(data, (value, key)=> {
-                result[key] = {};
-                _.forEach(value, (el, index)=> {
-                    result[key][index] = {
+                const serversData = _.get(value, 'sysinfo', {});
+                result[key] = {sysInfo: {}, description: _.get(value, 'description', '')};
+                _.forEach(serversData, (el, index)=> {
+                    result[key].sysInfo[index] = {
                         status: el.status,
-                        data: JSON.parse(el.text)
+                        data: el.status === 200 ? JSON.parse(el.text) : el.text
                     };
                 });
             });
             console.log('parsed: ', result);
             return {
                 masterFailed: false,
-                sysInfo: result
+                dataSum: result
             };
 
         case ACTIONS.SERVER_ERROR:

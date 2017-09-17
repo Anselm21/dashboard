@@ -11,31 +11,65 @@ export default class ServerPanel extends Component {
     static propTypes = {
         stats: PropTypes.object,
         name: PropTypes.string,
-        failedServers: PropTypes.number
+        description: PropTypes.string
     };
 
     renderServers() {
-        const {name} = this.props;
-        const configuredServersCount = config.clusters_list[name].servers.length;
-        const {failedServers} = this.props;
+        const {stats} = this.props;
         const servers = [];
-        for (let i = 0; i < configuredServersCount - failedServers; i++) {
-            servers.push(<div key={i} className="col-md-6 servers-row col-sm-3 col-xs-6"><Label key={i} className="custom-label"><Glyphicon glyph="tasks" /></Label></div>);
-        }
-        for (let k = 0; k < failedServers; k++) {
-            servers.push(<div key={k + 100} className="col-md-6 servers-row col-sm-3 col-xs-6"><Label key={k + 100} className="custom-label" bsStyle="danger"><Glyphicon glyph="tasks" /></Label></div>);
-        }
+        let i = 0;
+        _.forEach(stats, (value, key)=> {
+            i++;
+            if (value.status && value.status === 200) {
+                servers.push(
+                    <div key={i} className="col-md-6 servers-row col-sm-3 col-xs-6">
+                        <Label title={key} key={i} className="custom-label">
+                            <Glyphicon glyph="tasks"/>
+                        </Label>
+                    </div>);
+            } else {
+                servers.push(
+                    <div key={i} className="col-md-6 servers-row col-sm-3 col-xs-6">
+                        <Label title={key} key={i} className="custom-label" bsStyle="danger">
+                            <Glyphicon glyph="tasks"/>
+                        </Label>
+                    </div>);
+            }
+        });
         return servers;
+    }
+
+    calcClusterStats(stats) {
+        const result = {
+            cpuLoad: 0,
+            memoryTotal: 0,
+            memoryUsed: 0,
+            txSpeed: 0,
+            rxSpeed: 0
+        };
+        let liveServersNumber = 0;
+        _.forEach(stats, (value)=> {
+            if (value.status && value.status === 200) {
+                console.log('data: ', value);
+                result.cpuLoad += _.get(value, 'data.cpu_used', 0);
+                result.memoryTotal += _.get(value, 'data.memory_total', 0);
+                result.memoryUsed += _.get(value, 'data.memory_used', 0);
+                result.txSpeed += _.get(value, 'data.tx_speed', 0);
+                result.rxSpeed += _.get(value, 'data.rx_speed', 0);
+                liveServersNumber++;
+            }
+        });
+        if (liveServersNumber > 0) {
+            result.cpuLoad = Number((result.cpuLoad / liveServersNumber).toFixed(1));
+            console.log('result: ', result);
+        }
+        return result;
     }
 
     render() {
         require('../styles/server_panel.scss');
-        const {name, stats} = this.props;
-        const clusterDescription = config.clusters_list[name].description;
-        const memoryTotal = _.get(stats, 'memory_total', undefined);
-        const memoryUsed = _.get(stats, 'memory_used', undefined);
-        const rxSpeed = _.get(stats, 'rx_speed', 0);
-        const txSpeed = _.get(stats, 'tx_speed', 0);
+        const {name, stats, description} = this.props;
+        const resultStats = this.calcClusterStats(stats);
         const gaugeOptions = {
 
             chart: {
@@ -108,7 +142,7 @@ export default class ServerPanel extends Component {
             },
             series: [{
                 name: 'CPU',
-                data: [stats.cpu_used],
+                data: [resultStats.cpuLoad],
                 dataLabels: {
                     format: '<div style="text-align:center"><span style="font-size:30px;color:' +
                     'black ">{y}</span><br/><span style="font-size:20px;color:silver">%</span></div>'},
@@ -149,10 +183,10 @@ export default class ServerPanel extends Component {
             },
             series: [{
                 name: 'Free',
-                data: [Number((memoryTotal - memoryUsed).toFixed(1))]
+                data: [Number((resultStats.memoryTotal - resultStats.memoryUsed).toFixed(1))]
             }, {
                 name: 'Used',
-                data: [memoryUsed]
+                data: [resultStats.memoryUsed]
             }]
         };
 
@@ -162,7 +196,7 @@ export default class ServerPanel extends Component {
                     <div className="col-md-2">
                         <div className="row servers-row">
                             <div className="col-md-12">
-                                {clusterDescription}
+                                {description}
                             </div>
                         </div>
                         <div className="row align-center servers-row">
@@ -174,12 +208,12 @@ export default class ServerPanel extends Component {
                     </div>
                     <div className="col-md-5 align-center">
                         <ReactHighcharts config={memoryConfig}/>
-                        <span>Memory Total: {memoryTotal} GiB</span>
+                        <span>Memory Total: {resultStats.memoryTotal} GiB</span>
                     </div>
                 </div>
                 <div className="row align-center">
-                    <span className="net-param-span"><Glyphicon glyph="arrow-up" className="net-glyph"/>{rxSpeed} Mbps</span>
-                    <span className="net-param-span"><Glyphicon glyph="arrow-down" className="net-glyph"/>{txSpeed} Mbps</span>
+                    <span className="net-param-span"><Glyphicon glyph="arrow-up" className="net-glyph"/>{resultStats.rxSpeed} Mbps</span>
+                    <span className="net-param-span"><Glyphicon glyph="arrow-down" className="net-glyph"/>{resultStats.txSpeed} Mbps</span>
                 </div>
             </Panel>
         );

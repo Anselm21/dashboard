@@ -58,15 +58,19 @@ export default class Dashboard extends Component {
 
     renderServerTabs() {
         const {events} = this.props;
-        console.log(events);
         const serverTabs = [];
-        const sysInfo = _.get(events, 'sysInfo', {});
-        for (let el in sysInfo) {
-            if (!sysInfo.hasOwnProperty(el)) {
+        const clusters = _.get(events, 'dataSum', {});
+        console.log('EVENTS!!!!: ', events);
+        for (let el in clusters) {
+            if (!clusters.hasOwnProperty(el)) {
                 continue;
             }
-            console.log('el: ', el);
-            serverTabs.push(<ServerPanel key={el} name={el} stats={sysInfo[el]}/>);
+            console.log('ELEMENT: ', el);
+            console.log('GETTTTT: ', _.get(clusters, `[${el}].sysInfo`, {}));
+            serverTabs.push(<ServerPanel key={el}
+                                         name={el}
+                                         stats={_.get(clusters, `[${el}].sysInfo`, {})}
+                                         description={_.get(clusters, `[${el}].description`, '')}/>);
         }
         if (serverTabs.length === 0) {
             return <ProgressBar active now={100} label="LOADING CLUSTERS DATA"/>;

@@ -73,13 +73,7 @@ export default class ServerPanel extends Component {
             colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee',
                 '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
             chart: {
-                backgroundColor: {
-                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
-                    stops: [
-                        [0, '#2a2a2b'],
-                        [1, '#3e3e40']
-                    ]
-                },
+                backgroundColor: 'rgba(255, 255, 255, 0)',
                 style: {
                     fontFamily: '\'Unica One\', sans-serif'
                 },
@@ -297,9 +291,9 @@ export default class ServerPanel extends Component {
             // the value axis
             yAxis: {
                 stops: [
-                    [0.1, '#55BF3B'], // green
+                    [0.1, '#90ee7e'], // green
                     [0.5, '#DDDF0D'], // yellow
-                    [0.9, '#DF5353'] // red
+                    [0.9, '#f45b5b'] // red
                 ],
                 lineWidth: 0,
                 minorTickInterval: null,
@@ -324,15 +318,18 @@ export default class ServerPanel extends Component {
         };
 
         const cpuConfig = _.merge(gaugeOptions, darkTheme, {
+            title: {
+                margin: -18
+            },
             yAxis: {
                 min: 0,
                 max: 100,
                 title: {
-                    text: 'CPU Usage',
+                    text: 'CPU USAGE',
                     style: {
-                        'fontSize': '18px',
-                        'color': '#333333'
-                    }
+                        'fontSize': '20px',
+                        'color': '#E0E0E3'
+                    },
                 }
             },
             credits: {
@@ -359,7 +356,7 @@ export default class ServerPanel extends Component {
                 enabled: false
             },
             title: {
-                text: 'Memory Usage'
+                text: 'Memory Usage',
             },
             xAxis: {
                 categories: ['Memory']
@@ -389,7 +386,7 @@ export default class ServerPanel extends Component {
         });
 
         return (
-            <Panel header={name} key={name}>
+            <Panel header={name} key={name} className="serverPanel">
                 {error && (
                     <Alert bsStyle="danger">
                         <h4>Error: Lost connection to master-sysinfo script</h4>
@@ -399,7 +396,7 @@ export default class ServerPanel extends Component {
                 <div key={name} className="row">
                     <div className="col-md-2">
                         <div className="row servers-row">
-                            <div className="col-md-12">
+                            <div className="col-md-12 mainTextColor">
                                 {description}
                             </div>
                         </div>
@@ -412,7 +409,7 @@ export default class ServerPanel extends Component {
                     </div>
                     <div className="col-md-5 align-center">
                         <ReactHighcharts config={memoryConfig}/>
-                        <span>Memory Total: {resultStats.memoryTotal} GiB</span>
+                        <span className="net-param-span" id="memoryTotal">Memory Total: {resultStats.memoryTotal} GiB</span>
                     </div>
                 </div>
                 <div className="row align-center">

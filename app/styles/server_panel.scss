@@ -1,9 +1,18 @@
 :global(.align-center) {
   text-align: center;
 }
+:global(body) {
+  background-color: #333;
+}
+:global(.mainTitle) {
+  color: #cc7832;
+  text-align: center;
+  margin-bottom: 20px;
+}
 :global(.net-param-span) {
   padding: 0 10px 0 10px;
   font-size: 150%;
+  color: #E0E0E3;
 }
 :global(.custom-label) {
   padding: .4em .4em .2em .4em!important;
@@ -14,9 +23,38 @@
   margin-top: 15px;
   margin-bottom: 15px;
 }
+:global(.serverPanel) {
+  border-color: #505053!important;
+  border-radius: 2px!important;
+}
+:global(.panel-heading) {
+  background-image: -webkit-linear-gradient(top, #56554c 0%, #3e3d39 100%)!important;
+  background-image: -o-linear-gradient(top, #56554c 0%, #3e3d39 100%)!important;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#56554c), to(#3e3d39))!important;
+  background-image: linear-gradient(to bottom, #56554c 0%, #3e3d39 100%)!important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#56554c', endColorstr='#3e3d39', GradientType=0)!important;
+  border: none!important;
+  border-top-left-radius: 0!important;
+  border-top-right-radius: 0!important;
+  color: #E0E0E3!important;
+  font-size: 1.2em;
+}
 :global(.net-row) {
   margin-top: 25px;
 }
+:global(.mainTextColor) {
+  color: #E0E0E3;
+}
+:global(#memoryTotal) {
+  position: relative;
+  top: -10px;
+}
 :global(.highcharts-yaxis-grid .highcharts-grid-line) {
   display: none;
+}
+:global(.panel-body ) {
+    background: -webkit-linear-gradient(#2a2a2b,#3e3e40); /* Safari 5.1-6.0 */
+    background: -o-linear-gradient(#2a2a2b,#3e3e40); /* Opera 11.1-12.0 */
+    background: -moz-linear-gradient(#2a2a2b,#3e3e40); /* Firefox 3.6-15 */
+    background: linear-gradient(#2a2a2b,#3e3e40); /* Standard syntax */
 }

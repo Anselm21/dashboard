@@ -66,7 +66,6 @@ export default class ServerPanel extends Component {
     }
 
     render() {
-        require('../styles/server_panel.scss');
         const {name, stats, description, error} = this.props;
         const resultStats = this.calcClusterStats(stats);
         const darkTheme = {

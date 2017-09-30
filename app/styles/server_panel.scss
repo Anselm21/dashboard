@@ -1,6 +1,9 @@
 :global(.align-center) {
   text-align: center;
 }
+:global(.alignedLeft) {
+  margin-left: 5px!important;
+}
 :global(body) {
   background-color: #333;
 }

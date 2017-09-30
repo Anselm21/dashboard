@@ -89,7 +89,7 @@ export default class Dashboard extends Component {
 
     render() {
         return (
-            <div key="Dashboard" className="container">
+            <div key="Dashboard" className="container alignedLeft">
                 <Helmet title="Dashboard"/>
                 {this.renderServerTabs()}
             </div>);
